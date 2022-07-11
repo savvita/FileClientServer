@@ -1,0 +1,218 @@
+﻿<Window x:Class="Client.View.ClientView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Client.View"
+        mc:Ignorable="d"
+        Title="FTP Client" Height="400" Width="800" 
+        WindowStartupLocation="CenterScreen"
+        Background="#FF02293C">
+
+    <Window.Resources>
+        <ResourceDictionary Source="StyleDictionary.xaml" />
+    </Window.Resources>
+    
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+
+        <Grid Grid.Row="0" 
+              Grid.Column="0" 
+              Grid.ColumnSpan="3" 
+              Background="{StaticResource HighlightBrush}">
+            
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Column="0">
+                <StackPanel Orientation="Horizontal">
+                    <Label 
+                        Name="LogName" 
+                        Style="{StaticResource LabelStyle}" 
+                        Margin ="5 0" 
+                        Content="{Binding Client.Login, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" 
+                        FontSize="{StaticResource SmallFontSize}" />
+
+                    <Label 
+                        Style="{StaticResource LabelStyle}"  
+                        Margin ="5 0" 
+                        Content="Premium valid until" 
+                        Visibility="{Binding Client.IsPremiumValid, Converter={StaticResource BooleanToVisibilityConverter},UpdateSourceTrigger=PropertyChanged}"
+                        FontSize="{StaticResource SmallFontSize}" />
+                    
+                    <Label 
+                        Style="{StaticResource LabelStyle}"  
+                        Margin ="5 0" 
+                        Content="{Binding Client.PremiumValidUntil, Mode=OneWay}" 
+                        Visibility="{Binding Client.IsPremiumValid, Converter={StaticResource BooleanToVisibilityConverter},UpdateSourceTrigger=PropertyChanged}"
+                        FontSize="{StaticResource SmallFontSize}" />
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal">
+                    <Label 
+                        Style="{StaticResource LabelStyle}"  
+                        Margin ="5 0" 
+                        Content="Available downloads: " 
+                        FontSize="{StaticResource SmallFontSize}" />
+                    
+                    <Label 
+                        Style="{StaticResource LabelStyle}"  
+                        Margin ="5 0" 
+                        Content="{Binding Client.AvailableDownloads, Mode=OneWay}" 
+                        FontSize="{StaticResource SmallFontSize}" />
+
+                </StackPanel>
+            </StackPanel>
+
+            <Button 
+                Grid.Column="1"
+                Style="{StaticResource ButtonStyle}" 
+                Content="Buy Premium" 
+                Command="{Binding BuyPremiumCommand}"
+                Visibility="{Binding Client.IsAuthorized, Converter={StaticResource BooleanToVisibilityConverter},UpdateSourceTrigger=PropertyChanged}"
+                FontSize="{StaticResource SmallFontSize}" 
+                Margin ="5 0" />
+
+            <Grid Grid.Column="2" >
+
+
+                <Button 
+                    Name="AuthorizationButton"
+                    Style="{StaticResource ButtonStyle}"
+                    Content="Authorization"                    
+                    Margin ="5 0" 
+                    Command="{Binding AuthorizationCommand}" 
+                    FontSize="{StaticResource SmallFontSize}" />
+
+                <Button 
+                    Name="LogOutButton"
+                    Style="{StaticResource ButtonStyle}"
+                    Content="Log out" 
+                    Margin ="5 0" 
+                    Visibility="{Binding Client.IsAuthorized, Converter={StaticResource BooleanToVisibilityConverter},UpdateSourceTrigger=PropertyChanged}"
+                    Command="{Binding LogOutCommand}" 
+                    FontSize="{StaticResource SmallFontSize}" />
+            </Grid>
+        </Grid>
+
+        <Separator Grid.Row="1" Grid.ColumnSpan="3" />
+
+        <Label
+            Grid.Row="2"
+            Grid.Column="0"
+            Style="{StaticResource LabelStyle}"
+            Content="File:" />
+
+
+        <TextBox 
+            Grid.Row="2"
+            Grid.Column="1"
+            Style="{StaticResource TextBoxStyle}" 
+            IsReadOnly="True"
+            IsEnabled="{Binding Client.IsUploadAvailable}"
+            Text="{Binding FilePath, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+
+        <StackPanel
+            Grid.Row="2"
+            Grid.Column="2">
+
+            <Button           
+                Style="{StaticResource ButtonStyle}"
+                Content="Open file"  
+                Command="{Binding OpenCommand}"
+                IsEnabled="{Binding Client.IsUploadAvailable}" />
+
+            <Button 
+                Style="{StaticResource ButtonStyle}"
+                Content="Upload"
+                Command="{Binding SendCommand}"
+                IsEnabled="{Binding Client.IsUploadAvailable}" />
+
+        </StackPanel>
+
+        <Separator Grid.Row="3" Grid.ColumnSpan="3" />
+
+        <Label
+            Grid.Row="4"
+            Grid.Column="0"
+            Style="{StaticResource LabelStyle}"
+            Content="Uploaded file ID:" />
+
+        <TextBox 
+            Grid.Row="4"
+            Grid.Column="1"
+            Style="{StaticResource TextBoxStyle}" 
+            IsReadOnly="True" 
+            Text="{Binding FileID, UpdateSourceTrigger=PropertyChanged}" >
+
+            <TextBox.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Copy" Command="{Binding CopyCommand}" />
+                </ContextMenu>
+            </TextBox.ContextMenu>
+
+        </TextBox>
+
+
+        <Button 
+            Grid.Row="4"
+            Grid.Column="2"
+            Style="{StaticResource ButtonStyle}"
+            Content="Copy"
+            Command="{Binding CopyCommand}" />
+
+        <Separator Grid.Row="5" Grid.ColumnSpan="3" />
+
+        <Label
+            Grid.Row="6"
+            Grid.Column="0"
+            Style="{StaticResource LabelStyle}"
+            Content="File ID to download:" />
+
+        <TextBox 
+            Grid.Row="6"
+            Grid.Column="1"
+            Name="DownloadFileId" 
+            Style="{StaticResource TextBoxStyle}" >
+            <TextBox.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Paste" Click="PasteButton_Click" />
+                </ContextMenu>
+            </TextBox.ContextMenu>
+        </TextBox>
+
+        <StackPanel
+            Grid.Row="6"
+            Grid.Column="2">
+            
+            <Button 
+                Style="{StaticResource ButtonStyle}"
+                Content="Paste"
+                Click="PasteButton_Click" />
+
+            <Button 
+                Style="{StaticResource ButtonStyle}"
+                Content="Download" 
+                Command="{Binding DownloadCommand}"
+                CommandParameter="{Binding ElementName=DownloadFileId,Path=Text}" />
+        </StackPanel>
+
+    </Grid>
+</Window>
